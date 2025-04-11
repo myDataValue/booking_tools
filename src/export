@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 680" xmlns="http://www.w3.org/2000/svg">
+  <!-- Definitions -->
+  <defs>
+    <!-- Colors -->
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#003580;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00224d;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#003580;stop-opacity:1" />
+      <stop offset="16.6%" style="stop-color:#005cb9;stop-opacity:1" />
+      <stop offset="33.3%" style="stop-color:#0076ce;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#008489;stop-opacity:1" />
+      <stop offset="66.6%" style="stop-color:#f5a623;stop-opacity:1" />
+      <stop offset="83.3%" style="stop-color:#ff5a5f;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8f63ac;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Intent Level Gradients -->
+    <linearGradient id="highIntentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2ecc71;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:0.3" />
+    </linearGradient>
+    
+    <linearGradient id="medIntentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5a623;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#f5a623;stop-opacity:0.3" />
+    </linearGradient>
+    
+    <linearGradient id="lowIntentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#e74c3c;stop-opacity:0.3" />
+    </linearGradient>
+    
+    <!-- Icons -->
+    <symbol id="discoverIcon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12,10.9c-0.61,0-1.1,0.49-1.1,1.1c0,0.61,0.49,1.1,1.1,1.1c0.61,0,1.1-0.49,1.1-1.1C13.1,11.39,12.61,10.9,12,10.9z M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10c5.52,0,10-4.48,10-10C22,6.48,17.52,2,12,2z M14.19,14.19L6,18l3.81-8.19L18,6L14.19,14.19z"/>
+    </symbol>
+    
+    <symbol id="searchIcon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M15.5,14h-0.79l-0.28-0.27C15.41,12.59,16,11.11,16,9.5C16,5.91,13.09,3,9.5,3C5.91,3,3,5.91,3,9.5C3,13.09,5.91,16,9.5,16c1.61,0,3.09-0.59,4.23-1.57l0.27,0.28v0.79l5,4.99L20.49,19L15.5,14z M9.5,14C7.01,14,5,11.99,5,9.5S7.01,5,9.5,5S14,7.01,14,9.5S11.99,14,9.5,14z"/>
+    </symbol>
+    
+    <symbol id="compareIcon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm0 15H5l5-6v6zm9-15h-5v2h5v13l-5-6v9h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+    </symbol>
+    
+    <symbol id="filterIcon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+    </symbol>
+    
+    <symbol id="bookIcon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/>
+    </symbol>
+    
+    <symbol id="stayIcon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M7,13c1.66,0,3-1.34,3-3S8.66,7,7,7s-3,1.34-3,3S5.34,13,7,13z M19,7h-8v7H3V5H1v15h2v-3h18v3h2V11C23,8.79,21.21,7,19,7z"/>
+    </symbol>
+    
+    <symbol id="reviewIcon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M22,9.24l-7.19-0.62L12,2L9.19,8.63L2,9.24l5.46,4.73L5.82,21L12,17.27L18.18,21l-1.63-7.03L22,9.24z M12,15.4l-3.76,2.27l1-4.28l-3.32-2.88l4.38-0.38L12,6.1l1.71,4.04l4.38,0.38l-3.32,2.88l1,4.28L12,15.4z"/>
+    </symbol>
+    
+    <symbol id="personalizationIcon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+    </symbol>
+    
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.1"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="680" fill="#fafafa"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1000" height="70" fill="#003580"/>
+  <text x="50" y="42" font-family="Arial" font-size="22" font-weight="bold" fill="#ffffff">Booking.com</text>
+  <text x="500" y="42" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#ffffff">CUSTOMER JOURNEY & RANKING SIGNALS</text>
+  
+  <!-- Main Journey Line -->
+  <line x1="100" y1="150" x2="900" y2="150" stroke="url(#lineGradient)" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Intent Level Zones -->
+  <rect x="50" y="80" width="900" height="20" fill="#f5f5f5"/>
+  <text x="60" y="95" font-family="Arial" font-size="12" fill="#666">Intent Levels:</text>
+  
+  <!-- High Intent Band -->
+  <rect x="100" y="180" width="800" height="60" fill="url(#highIntentGrad)" rx="3" ry="3"/>
+  <text x="120" y="220" font-family="Arial" font-size="11" fill="#333">HIGH INTENT (Business travelers, decided customers)</text>
+  
+  <!-- Medium Intent Band -->
+  <rect x="100" y="240" width="800" height="60" fill="url(#medIntentGrad)" rx="3" ry="3"/>
+  <text x="120" y="280" font-family="Arial" font-size="11" fill="#333">MEDIUM INTENT (Persuadable, ready to book with right offer)</text>
+  
+  <!-- Low Intent Band -->
+  <rect x="100" y="300" width="800" height="60" fill="url(#lowIntentGrad)" rx="3" ry="3"/>
+  <text x="120" y="340" font-family="Arial" font-size="11" fill="#333">LOW INTENT (Early exploration phase, unlikely to book in current session)</text>
+  
+  <!-- Journey Phases -->
+  <!-- DISCOVER -->
+  <circle cx="150" cy="150" r="14" fill="#ffffff" stroke="#003580" stroke-width="2" filter="url(#softShadow)"/>
+  <use xlink:href="#discoverIcon" x="138" y="138" width="24" height="24" fill="#003580"/>
+  <text x="150" y="115" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#003580">DISCOVER</text>
+  <rect x="105" y="380" width="90" height="90" rx="5" ry="5" fill="#ffffff" stroke="#eeeeee" stroke-width="1" filter="url(#softShadow)"/>
+  <text x="150" y="400" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#003580">Inspiration</text>
+  <line x1="120" y1="410" x2="180" y2="410" stroke="#eeeeee" stroke-width="1"/>
+  <text x="150" y="425" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Browse destinations</text>
+  <text x="150" y="445" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• View promotions</text>
+  <text x="150" y="465" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Seasonal content</text>
+  
+  <!-- SEARCH -->
+  <circle cx="250" cy="150" r="14" fill="#ffffff" stroke="#005cb9" stroke-width="2" filter="url(#softShadow)"/>
+  <use xlink:href="#searchIcon" x="238" y="138" width="24" height="24" fill="#005cb9"/>
+  <text x="250" y="115" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#005cb9">SEARCH</text>
+  <rect x="205" y="380" width="90" height="90" rx="5" ry="5" fill="#ffffff" stroke="#eeeeee" stroke-width="1" filter="url(#softShadow)"/>
+  <text x="250" y="400" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#005cb9">Initial Search</text>
+  <line x1="220" y1="410" x2="280" y2="410" stroke="#eeeeee" stroke-width="1"/>
+  <text x="250" y="425" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Enter location</text>
+  <text x="250" y="445" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Select dates</text>
+  <text x="250" y="465" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Specify guests</text>
+  
+  <!-- FILTER -->
+  <circle cx="350" cy="150" r="14" fill="#ffffff" stroke="#0076ce" stroke-width="2" filter="url(#softShadow)"/>
+  <use xlink:href="#filterIcon" x="338" y="138" width="24" height="24" fill="#0076ce"/>
+  <text x="350" y="115" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#0076ce">FILTER</text>
+  <rect x="305" y="380" width="90" height="90" rx="5" ry="5" fill="#ffffff" stroke="#eeeeee" stroke-width="1" filter="url(#softShadow)"/>
+  <text x="350" y="400" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#0076ce">Narrowing</text>
+  <line x1="320" y1="410" x2="380" y2="410" stroke="#eeeeee" stroke-width="1"/>
+  <text x="350" y="425" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Apply filters</text>
+  <text x="350" y="445" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Price range</text>
+  <text x="350" y="465" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Property types</text>
+  
+  <!-- COMPARE -->
+  <circle cx="450" cy="150" r="14" fill="#ffffff" stroke="#0092d8" stroke-width="2" filter="url(#softShadow)"/>
+  <use xlink:href="#compareIcon" x="438" y="138" width="24" height="24" fill="#0092d8"/>
+  <text x="450" y="115" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#0092d8">COMPARE</text>
+  <rect x="405" y="380" width="90" height="90" rx="5" ry="5" fill="#ffffff" stroke="#eeeeee" stroke-width="1" filter="url(#softShadow)"/>
+  <text x="450" y="400" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#0092d8">Decision Making</text>
+  <line x1="420" y1="410" x2="480" y2="410" stroke="#eeeeee" stroke-width="1"/>
+  <text x="450" y="425" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Read reviews</text>
+  <text x="450" y="445" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Compare options</text>
+  <text x="450" y="465" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Check availability</text>
+  
+  <!-- IN-SESSION PERSONALIZATION -->
+  <rect x="380" y="80" width="140" height="25" fill="#ffffff" stroke="#0092d8" stroke-width="1" rx="12" ry="12"/>
+  <use xlink:href="#personalizationIcon" x="388" y="82" width="20" height="20" fill="#0092d8"/>
+  <text x="450" y="96" font-family="Arial" font-size="10" font-weight="bold" text-anchor="middle" fill="#0092d8">IN-SESSION PERSONALIZATION</text>
+  <path d="M450,105 L450,135" stroke="#0092d8" stroke-width="1" stroke-dasharray="3,2"/>
+  
+  <!-- BOOK -->
+  <circle cx="550" cy="150" r="14" fill="#ffffff" stroke="#008489" stroke-width="2" filter="url(#softShadow)"/>
+  <use xlink:href="#bookIcon" x="538" y="138" width="24" height="24" fill="#008489"/>
+  <text x="550" y="115" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#008489">BOOK</text>
+  <rect x="505" y="380" width="90" height="90" rx="5" ry="5" fill="#ffffff" stroke="#eeeeee" stroke-width="1" filter="url(#softShadow)"/>
+  <text x="550" y="400" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#008489">Reservation</text>
+  <line x1="520" y1="410" x2="580" y2="410" stroke="#eeeeee" stroke-width="1"/>
+  <text x="550" y="425" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Select room type</text>
+  <text x="550" y="445" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Enter guest details</text>
+  <text x="550" y="465" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Complete payment</text>
+  
+  <!-- STAY -->
+  <circle cx="650" cy="150" r="14" fill="#ffffff" stroke="#f5a623" stroke-width="2" filter="url(#softShadow)"/>
+  <use xlink:href="#stayIcon" x="638" y="138" width="24" height="24" fill="#f5a623"/>
+  <text x="650" y="115" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#f5a623">STAY</text>
+  <rect x="605" y="380" width="90" height="90" rx="5" ry="5" fill="#ffffff" stroke="#eeeeee" stroke-width="1" filter="url(#softShadow)"/>
+  <text x="650" y="400" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#f5a623">Experience</text>
+  <line x1="620" y1="410" x2="680" y2="410" stroke="#eeeeee" stroke-width="1"/>
+  <text x="650" y="425" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Check-in process</text>
+  <text x="650" y="445" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Stay experience</text>
+  <text x="650" y="465" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Check-out process</text>
+  
+  <!-- REVIEW -->
+  <circle cx="750" cy="150" r="14" fill="#ffffff" stroke="#ff5a5f" stroke-width="2" filter="url(#softShadow)"/>
+  <use xlink:href="#reviewIcon" x="738" y="138" width="24" height="24" fill="#ff5a5f"/>
+  <text x="750" y="115" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#ff5a5f">REVIEW</text>
+  <rect x="705" y="380" width="90" height="90" rx="5" ry="5" fill="#ffffff" stroke="#eeeeee" stroke-width="1" filter="url(#softShadow)"/>
+  <text x="750" y="400" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#ff5a5f">Feedback</text>
+  <line x1="720" y1="410" x2="780" y2="410" stroke="#eeeeee" stroke-width="1"/>
+  <text x="750" y="425" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Rate property</text>
+  <text x="750" y="445" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Write review</text>
+  <text x="750" y="465" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Share experience</text>
+  
+  <!-- LOYALTY -->
+  <circle cx="850" cy="150" r="14" fill="#ffffff" stroke="#8f63ac" stroke-width="2" filter="url(#softShadow)"/>
+  <use xlink:href="#personalizationIcon" x="838" y="138" width="24" height="24" fill="#8f63ac"/>
+  <text x="850" y="115" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#8f63ac">LOYALTY</text>
+  <rect x="805" y="380" width="90" height="90" rx="5" ry="5" fill="#ffffff" stroke="#eeeeee" stroke-width="1" filter="url(#softShadow)"/>
+  <text x="850" y="400" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#8f63ac">Retention</text>
+  <line x1="820" y1="410" x2="880" y2="410" stroke="#eeeeee" stroke-width="1"/>
+  <text x="850" y="425" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Earn Genius status</text>
+  <text x="850" y="445" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Personalized offers</text>
+  <text x="850" y="465" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">• Future bookings</text>
+  
+  <!-- Loyalty Loop -->
+  <path d="M850,150 C950,50 950,30 500,30 C100,30 100,80 150,150" stroke="#8f63ac" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  <polygon points="152,150 160,154 160,146" fill="#8f63ac"/>
+  <text x="480" y="60" font-family="Arial" font-size="11" font-style="italic" fill="#8f63ac">Loyalty Loop: Returning customers benefit from historical co-occurrence data</text>
+  
+  <!-- Ranking Signals Section -->
+  <text x="100" y="500" font-family="Arial" font-size="14" font-weight="bold" fill="#003580">RANKING SIGNALS STRENGTH</text>
+  
+  <!-- Ranking Signal Matrix -->
+  <!-- Headers -->
+  <text x="150" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#003580">DISCOVER</text>
+  <text x="250" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#005cb9">SEARCH</text>
+  <text x="350" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#0076ce">FILTER</text>
+  <text x="450" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#0092d8">COMPARE</text>
+  <text x="550" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#008489">BOOK</text>
+  <text x="650" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#f5a623">STAY</text>
+  <text x="750" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#ff5a5f">REVIEW</text>
+  <text x="850" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#8f63ac">LOYALTY</text>
+  
+  <!-- Signal Strength Rows -->
+  <text x="80" y="540" font-family="Arial" font-size="10" text-anchor="end" fill="#666">Impressions</text>
+  <rect x="130" y="535" width="40" height="10" rx="2" ry="2" fill="#003580" opacity="0.3"/>
+  <rect x="230" y="535" width="40" height="10" rx="2" ry="2" fill="#005cb9" opacity="0.3"/>
+  <rect x="330" y="535" width="40" height="10" rx="2" ry="2" fill="#0076ce" opacity="0.3"/>
+  <rect x="430" y="535" width="40" height="10" rx="2" ry="2" fill="#0092d8" opacity="0.3"/>
+  <rect x="530" y="535" width="40" height="10" rx="2" ry="2" fill="#008489" opacity="0.3"/>
+  <rect x="630" y="535" width="40" height="10" rx="2" ry="2" fill="#f5a623" opacity="0.3"/>
+  <rect x="730" y="535" width="40" height="10" rx="2" ry="2" fill="#ff5a5f" opacity="0.3"/>
+  <rect x="830" y="535" width="40" height="10" rx="2" ry="2" fill="#8f63ac" opacity="0.3"/>
+  
+  <text x="80" y="560" font-family="Arial" font-size="10" text-anchor="end" fill="#666">Clicks</text>
+  <rect x="130" y="555" width="40" height="10" rx="2" ry="2" fill="#003580" opacity="0.5"/>
+  <rect x="230" y="555" width="40" height="10" rx="2" ry="2" fill="#005cb9" opacity="0.6"/>
+  <rect x="330" y="555" width="40" height="10" rx="2" ry="2" fill="#0076ce" opacity="0.6"/>
+  <rect x="430" y="555" width="40" height="10" rx="2" ry="2" fill="#0092d8" opacity="0.7"/>
+  <rect x="530" y="555" width="40" height="10" rx="2" ry="2" fill="#008489" opacity="0.6"/>
+  <rect x="630" y="555" width="40" height="10" rx="2" ry="2" fill="#f5a623" opacity="0.4"/>
+  <rect x="730" y="555" width="40" height="10" rx="2" ry="2" fill="#ff5a5f" opacity="0.5"/>
+  <rect x="830" y="555" width="40" height="10" rx="2" ry="2" fill="#8f63ac" opacity="0.5"/>
+  
+  <text x="80" y="580" font-family="Arial" font-size="10" text-anchor="end" fill="#666">Dwell Time</text>
+  <rect x="130" y="575" width="40" height="10" rx="2" ry="2" fill="#003580" opacity="0.5"/>
+  <rect x="230" y="575" width="40" height="10" rx="2" ry="2" fill="#005cb9" opacity="0.5"/>
+  <rect x="330" y="575" width="40" height="10" rx="2" ry="2" fill="#0076ce" opacity="0.5"/>
+  <rect x="430" y="575" width="40" height="10" rx="2" ry="2" fill="#0092d8" opacity="0.8"/>
+  <rect x="530" y="575" width="40" height="10" rx="2" ry="2" fill="#008489" opacity="0.7"/>
+  <rect x="630" y="575" width="40" height="10" rx="2" ry="2" fill="#f5a623" opacity="0.3"/>
+  <rect x="730" y="575" width="40" height="10" rx="2" ry="2" fill="#ff5a5f" opacity="0.6"/>
+  <rect x="830" y="575" width="40" height="10" rx="2" ry="2" fill="#8f63ac" opacity="0.3"/>
+  
+  <text x="80" y="600" font-family="Arial" font-size="10" text-anchor="end" fill="#666">Reservations</text>
+  <rect x="130" y="595" width="40" height="10" rx="2" ry="2" fill="#003580" opacity="0.3"/>
+  <rect x="230" y="595" width="40" height="10" rx="2" ry="2" fill="#005cb9" opacity="0.4"/>
+  <rect x="330" y="595" width="40" height="10" rx="2" ry="2" fill="#0076ce" opacity="0.5"/>
+  <rect x="430" y="595" width="40" height="10" rx="2" ry="2" fill="#0092d8" opacity="0.7"/>
+  <rect x="530" y="595" width="40" height="10" rx="2" ry="2" fill="#008489"/>
+  <rect x="630" y="595" width="40" height="10" rx="2" ry="2" fill="#f5a623" opacity="0.4"/>
+  <rect x="730" y="595" width="40" height="10" rx="2" ry="2" fill="#ff5a5f" opacity="0.5"/>
+  <rect x="830" y="595" width="40" height="10" rx="2" ry="2" fill="#8f63ac" opacity="0.8"/>
+  
+  <text x="80" y="620" font-family="Arial" font-size="10" text-anchor="end" fill="#666">Stay/Reviews</text>
+  <rect x="130" y="615" width="40" height="10" rx="2" ry="2" fill="#003580" opacity="0.2"/>
+  <rect x="230" y="615" width="40" height="10" rx="2" ry="2" fill="#005cb9" opacity="0.2"/>
+  <rect x="330" y="615" width="40" height="10" rx="2" ry="2" fill="#0076ce" opacity="0.2"/>
+  <rect x="430" y="615" width="40" height="10" rx="2" ry="2" fill="#0092d8" opacity="0.4"/>
+  <rect x="530" y="615" width="40" height="10" rx="2" ry="2" fill="#008489" opacity="0.5"/>
+  <rect x="630" y="615" width="40" height="10" rx="2" ry="2" fill="#f5a623" opacity="0.8"/>
+  <rect x="730" y="615" width="40" height="10" rx="2" ry="2" fill="#ff5a5f"/>
+  <rect x="830" y="615" width="40" height="10" rx="2" ry="2" fill="#8f63ac" opacity="0.9"/>
+  
+  <!-- Key Metrics Section -->
+  <rect x="100" y="640" width="800" height="1" fill="#ddd"/>
+  <text x="100" y="655" font-family="Arial" font-size="14" font-weight="bold" fill="#003580">KEY METRICS</text>
+  
+  <!-- Metric Items -->
+  <rect x="130" y="665" width="90" height="25" rx="3" ry="3" fill="#f8f8f8" stroke="#eeeeee" stroke-width="1"/>
+  <text x="175" y="682" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#003580">TRAFFIC</text>
+  
+  <rect x="230" y="665" width="90" height="25" rx="3" ry="3" fill="#f8f8f8" stroke="#eeeeee" stroke-width="1"/>
+  <text x="275" y="682" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#005cb9">SEARCH RATE</text>
+  
+  <rect x="330" y="665" width="90" height="25" rx="3" ry="3" fill="#f8f8f8" stroke="#eeeeee" stroke-width="1"/>
+  <text x="375" y="682" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#0076ce">FILTER USAGE</text>
+  
+  <rect x="430" y="665" width="90" height="25" rx="3" ry="3" fill="#f8f8f8" stroke="#eeeeee" stroke-width="1"/>
+  <text x="475" y="682" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#0092d8">ENGAGEMENT</text>
+  
+  <rect x="530" y="665" width="90" height="25" rx="3" ry="3" fill="#f8f8f8" stroke="#eeeeee" stroke-width="1"/>
+  <text x="575" y="682" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#008489">CONVERSION</text>
+  
+  <rect x="630" y="665" width="90" height="25" rx="3" ry="3" fill="#f8f8f8" stroke="#eeeeee" stroke-width="1"/>
+  <text x="675" y="682" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#f5a623">SATISFACTION</text>
+  
+  <rect x="730" y="665" width="90" height="25" rx="3" ry="3" fill="#f8f8f8" stroke="#eeeeee" stroke-width="1"/>
+  <text x="775" y="682" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#ff5a5f">REVIEW SCORE</text>
+  
+  <rect x="830" y="665" width="90" height="25" rx="3" ry="3" fill="#f8f8f8" stroke="#eeeeee" stroke-width="1"/>
+  <text x="875" y="682" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#8f63ac">RETENTION</text>
+  
+  <!-- Footer with Paper Reference -->
+  <rect x="50" y="705" width="900" height="1" fill="#ddd"/>
+  <text x="500" y="725" font-family="Arial" font-size="10" text-anchor="middle" font-style="italic" fill="#666">Diagram based on "Beyond algorithms - Ranking at scale at Booking.com" research paper</text>
+</svg>
