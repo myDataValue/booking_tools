@@ -1256,8 +1256,8 @@ const BookingMetricsSlider = () => {
               </div>
               <input
                 type="range"
-                min="50"
-                max="200"
+                min="25"
+                max="500"
                 value={baseAdr}
                 onChange={(e) => setBaseAdr(parseInt(e.target.value))}
                 className="w-full"
@@ -2101,8 +2101,8 @@ const BookingMetricsSlider = () => {
               </div>
               <input
                 type="range"
-                min="50"
-                max="200"
+                min="25"
+                max="500"
                 value={medianCompetitorPrice}
                 onChange={(e) =>
                   setMedianCompetitorPrice(parseInt(e.target.value))
