@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import App from "./App";
 import PerformanceOptimization from "./performanceOptimization";
+import PortfolioAuto from "./PortfolioAuto";
 import RevisedFigure4 from "./AdrVsOcc";
 import "./index.css";
 
@@ -23,6 +24,9 @@ if (root) {
             <li>
               <Link to="/adr-analysis" className="hover:text-gray-300">ADR Analysis</Link>
             </li>
+            <li>
+              <Link to="/portfolio" className="hover:text-gray-300">Portfolio</Link>
+            </li>
           </ul>
         </nav>
 
@@ -30,6 +34,7 @@ if (root) {
           <Route path="/" element={<App />} />
           <Route path="/performance" element={<PerformanceOptimization />} />
           <Route path="/adr-analysis" element={<RevisedFigure4 />} />
+          <Route path="/portfolio" element={<PortfolioAuto />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>
