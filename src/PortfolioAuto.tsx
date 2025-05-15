@@ -465,6 +465,39 @@ const PortfolioAuto = () => {
     setPendingChanges(newPendingChanges);
   };
 
+  // Toggle cancellation policy status with pending changes and price updates
+  const toggleCancellationStatus = (propertyId: number, policyType: string) => {
+    const property = properties.find(p => p.id === propertyId);
+    const newPendingChanges = { ...pendingChanges };
+    
+    if (!property) return;
+
+    const pendingKey = `${propertyId}-cancellation-${policyType}`;
+    const currentStatus = property.cancellationPolicies[policyType as keyof typeof property.cancellationPolicies];
+    const newStatus = currentStatus === "active" ? "inactive" : "active";
+
+    // If status is not available
+    if (currentStatus === "na") return;
+
+    // If there's a pending change trying to set the same new status we're applying now,
+    // revert it by removing the pending change
+    if (pendingChanges[pendingKey] && pendingChanges[pendingKey].newValue === newStatus) {
+      delete newPendingChanges[pendingKey];
+    }
+    // If no pending change, or it's going in a different direction, create/replace it
+    else if (currentStatus !== newStatus) {
+      newPendingChanges[pendingKey] = {
+        type: 'cancellation',
+        propertyId,
+        field: policyType,
+        oldValue: currentStatus,
+        newValue: newStatus
+      };
+    }
+
+    setPendingChanges(newPendingChanges);
+  };
+
   // Apply bulk update of cancellation policies
   const applyBulkCancellationUpdate = (policyType: string, newStatus: string) => {
     // Create pending changes for all selected properties
@@ -742,13 +775,16 @@ const PortfolioAuto = () => {
     return (
       <div
         className={`w-4 h-4 rounded-full mx-auto ${pendingClass} ${isNotAvailable ? 'cursor-default' : 'cursor-pointer'}`}
-        onClick={() => {
+        onClick={(e) => {
+          // Stop event propagation to prevent modal closing
+          e.stopPropagation();
+          
           if (isNotAvailable) return; // Don't allow clicking if status is "na"
 
           if (type === 'promotion') {
             togglePromotionStatus(propertyId, field);
           } else if (type === 'cancellation') {
-            toggleCancellations(propertyId, field as "flexible" | "firm" | "nonRefundable");
+            toggleCancellationStatus(propertyId, field);
           }
         }}
       ></div>
@@ -2012,80 +2048,72 @@ const PortfolioAuto = () => {
                     </td>
                   </tr>
 
-                  {/* Expanded rows for detailed views */}
-                  {!showPromotionsColumns && isPromotionsExpanded && (
+                  {/* Create a single expanded row that shows all three sections */}
+                  {(isPromotionsExpanded || isLosDiscountsExpanded || isCancellationsExpanded) && (
                     <tr className="bg-gray-50">
-                      <td colSpan={9}></td>
-                      <td colSpan={showPromotionsColumns ? 9 : 1} className="p-4 border-b border-gray-200">
-                        <div className="grid grid-cols-3 gap-3">
-                          {Object.entries(property.promotions)
-                            .filter(([key]) => key !== 'weeklyDiscount' && key !== 'monthlyDiscount')
-                            .map(([key]) => {
+                      <td></td> {/* Checkbox column */}
+                      <td colSpan={7}></td> {/* Span across Property through Net ADR columns */}
+
+                      {/* Promotions expanded section */}
+                      <td className={`p-4 ${isPromotionsExpanded ? 'border border-blue-200 bg-blue-50' : ''}`}>
+                        {isPromotionsExpanded && (
+                          <div className="grid grid-cols-3 gap-3">
+                            {Object.entries(property.promotions)
+                              .filter(([key]) => key !== 'weeklyDiscount' && key !== 'monthlyDiscount')
+                              .map(([key]) => {
+                                const formattedName = key
+                                  .replace(/([A-Z])/g, ' $1')
+                                  .replace(/^./, (str) => str.toUpperCase());
+
+                                return (
+                                  <div key={key} className="flex items-center">
+                                    {renderStatus(property.id, 'promotion', key)}
+                                    <span className="ml-2 text-sm">{formattedName}</span>
+                                  </div>
+                                );
+                              })}
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Rate LOS Discount expanded section */}
+                      <td className={`p-4 ${isLosDiscountsExpanded ? 'border border-blue-200 bg-blue-50' : ''}`}>
+                        {isLosDiscountsExpanded && (
+                          <div className="grid grid-cols-2 gap-3">
+                            {[
+                              ['weeklyDiscount', 'Weekly Discount'],
+                              ['monthlyDiscount', 'Monthly Discount']
+                            ].map(([key, label]) => (
+                              <div key={key} className="flex items-center">
+                                {renderStatus(property.id, 'promotion', key)}
+                                <span className="ml-2 text-sm">{label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Cancellation Policies expanded section */}
+                      <td className={`p-4 ${isCancellationsExpanded ? 'border border-blue-200 bg-blue-50' : ''}`}>
+                        {isCancellationsExpanded && (
+                          <div className="grid grid-cols-3 gap-3">
+                            {Object.entries(property.cancellationPolicies).map(([key]) => {
                               const formattedName = key
                                 .replace(/([A-Z])/g, ' $1')
                                 .replace(/^./, (str) => str.toUpperCase());
 
                               return (
                                 <div key={key} className="flex items-center">
-                                  {renderStatus(property.id, 'promotion', key)}
+                                  {renderStatus(property.id, 'cancellation', key)}
                                   <span className="ml-2 text-sm">{formattedName}</span>
                                 </div>
                               );
                             })}
-                        </div>
+                          </div>
+                        )}
                       </td>
-                      <td colSpan={showLosDiscountColumns ? 3 : 1}></td>
-                      <td colSpan={showCancellationsColumns ? 4 : 1}></td>
-                      <td colSpan={2}></td>
-                    </tr>
-                  )}
 
-                  {/* Expanded LOS discounts row */}
-                  {!showLosDiscountColumns && isLosDiscountsExpanded && (
-                    <tr className="bg-gray-50">
-                      <td colSpan={9}></td>
-                      <td colSpan={showPromotionsColumns ? 9 : 1}></td>
-                      <td colSpan={showLosDiscountColumns ? 3 : 1} className="p-4 border-b border-gray-200">
-                        <div className="grid grid-cols-2 gap-3">
-                          {[
-                            ['weeklyDiscount', 'Weekly Discount'],
-                            ['monthlyDiscount', 'Monthly Discount']
-                          ].map(([key, label]) => (
-                            <div key={key} className="flex items-center">
-                              {renderStatus(property.id, 'promotion', key)}
-                              <span className="ml-2 text-sm">{label}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </td>
-                      <td colSpan={showCancellationsColumns ? 4 : 1}></td>
-                      <td colSpan={2}></td>
-                    </tr>
-                  )}
-
-                  {/* Expanded cancellation policies row */}
-                  {!showCancellationsColumns && isCancellationsExpanded && (
-                    <tr className="bg-gray-50">
-                      <td colSpan={9}></td>
-                      <td colSpan={showPromotionsColumns ? 9 : 1}></td>
-                      <td colSpan={showLosDiscountColumns ? 3 : 1}></td>
-                      <td colSpan={showCancellationsColumns ? 4 : 1} className="p-4 border-b border-gray-200">
-                        <div className="grid grid-cols-3 gap-3">
-                          {Object.entries(property.cancellationPolicies).map(([key]) => {
-                            const formattedName = key
-                              .replace(/([A-Z])/g, ' $1')
-                              .replace(/^./, (str) => str.toUpperCase());
-
-                            return (
-                              <div key={key} className="flex items-center">
-                                {renderStatus(property.id, 'cancellation', key)}
-                                <span className="ml-2 text-sm">{formattedName}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </td>
-                      <td colSpan={2}></td>
+                      <td colSpan={2}></td> {/* Span across Status and Last Synced columns */}
                     </tr>
                   )}
                 </React.Fragment>
