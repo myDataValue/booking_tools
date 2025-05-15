@@ -169,11 +169,84 @@ const mockProperties = [
   }
 ];
 
-// Add lastSyncDate to each property
-const propertiesWithSyncDate = mockProperties.map(property => ({
-  ...property,
-  lastSyncDate: new Date(2023, 6, Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0]
-}));
+// Calculate discount percentage based on active promotions
+const calculateDiscountPercentage = (property) => {
+  let discountPercentage = 0;
+
+  // Add promotion discounts
+  if (property.promotions.genius === "active") discountPercentage += 10;
+  if (property.promotions.limitedTimeDeal === "active") discountPercentage += 15;
+  if (property.promotions.getawayDeal === "active") discountPercentage += 10;
+  if (property.promotions.lastMinuteDeal === "active") discountPercentage += 12;
+  if (property.promotions.earlyBookerDeal === "active") discountPercentage += 8;
+
+  // Add LOS discounts
+  if (property.promotions.weeklyDiscount === "active") discountPercentage += 15;
+  if (property.promotions.monthlyDiscount === "active") discountPercentage += 25;
+
+  // Cap the discount at a reasonable maximum (e.g., 50%)
+  return Math.min(discountPercentage, 50);
+};
+
+// Calculate Guest ADR based on base ADR, PMS markup, and discounts
+const calculateGuestAdr = (property) => {
+  // Start with base ADR
+  const basePrice = property.adr;
+  
+  // Apply PMS markup
+  const priceWithMarkup = basePrice * (1 + property.pmsMarkup / 100);
+  
+  // Calculate discount percentage
+  const discountPercentage = calculateDiscountPercentage(property);
+  
+  // Apply discounts
+  const finalPrice = priceWithMarkup * (1 - discountPercentage / 100);
+  
+  // Return rounded to 2 decimal places
+  return Math.round(finalPrice * 100) / 100;
+};
+
+// Calculate Net ADR (the amount you receive after Booking.com commissions)
+const calculateNetAdr = (property) => {
+  // Start with Guest ADR (what the guest pays)
+  const guestAdr = property.guestAdr || calculateGuestAdr(property);
+  
+  // Subtract the visibility booster commission
+  const netAdr = guestAdr * (1 - property.visibilityBooster / 100);
+  
+  // Return rounded to 2 decimal places
+  return Math.round(netAdr * 100) / 100;
+};
+
+// Update property prices when changing attributes
+const updatePropertyPrices = (property, newPmsMarkup = null, newVisibilityBooster = null) => {
+  const updatedProperty = { ...property };
+  
+  // Update PMS markup if provided
+  if (newPmsMarkup !== null) {
+    updatedProperty.pmsMarkup = newPmsMarkup;
+  }
+  
+  // Update visibility booster if provided
+  if (newVisibilityBooster !== null) {
+    updatedProperty.visibilityBooster = newVisibilityBooster;
+  }
+  
+  // Recalculate prices
+  updatedProperty.guestAdr = calculateGuestAdr(updatedProperty);
+  updatedProperty.netAdr = calculateNetAdr(updatedProperty);
+  
+  return updatedProperty;
+};
+
+// Add lastSyncDate to each property and calculate pricing
+const propertiesWithSyncDate = mockProperties.map(property => {
+  const propertyWithPrices = updatePropertyPrices(property);
+  return {
+    ...propertyWithPrices,
+    lastSyncDate: new Date(2023, 6, Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0]
+  };
+});
 
 // Generate tag list and city list from properties
 const getAllTags = () => {
@@ -207,6 +280,7 @@ const PortfolioAuto = () => {
   const [expandedPromotions, setExpandedPromotions] = useState<Record<number, boolean>>({});
   const [expandedLosDiscounts, setExpandedLosDiscounts] = useState<Record<number, boolean>>({});
   const [expandedCancellations, setExpandedCancellations] = useState<Record<number, boolean>>({});
+  const [showAllFilterTags, setShowAllFilterTags] = useState(false);
   const [showPromotionsColumns, setShowPromotionsColumns] = useState(false);
   const [showLosDiscountColumns, setShowLosDiscountColumns] = useState(false);
   const [showCancellationsColumns, setShowCancellationsColumns] = useState(false);
@@ -321,109 +395,35 @@ const PortfolioAuto = () => {
     setSelectAll(!selectAll);
   };
 
-  // Toggle promotion status with pending changes
+  // Toggle promotion status with pending changes and price updates
   const togglePromotionStatus = (propertyId: number, promotionType: string) => {
     const property = properties.find(p => p.id === propertyId);
+    const newPendingChanges = { ...pendingChanges };
+    
     if (!property) return;
 
     const pendingKey = `${propertyId}-promotion-${promotionType}`;
-
-    // If there's already a pending change, remove it to revert to original state
-    if (pendingChanges[pendingKey]) {
-      const newPendingChanges = { ...pendingChanges };
-      delete newPendingChanges[pendingKey];
-      setPendingChanges(newPendingChanges);
-      return;
-    }
-
     const currentStatus = property.promotions[promotionType as keyof typeof property.promotions];
     const newStatus = currentStatus === "active" ? "inactive" : "active";
 
-    // Set pending change
-    setPendingChanges({
-      ...pendingChanges,
-      [pendingKey]: {
+    // Skip if status is not available
+    if (currentStatus === "na") return;
+
+    // If there's a pending change trying to set the same new status we're applying now,
+    // revert it by removing the pending change
+    if (pendingChanges[pendingKey] && pendingChanges[pendingKey].newValue === newStatus) {
+      delete newPendingChanges[pendingKey];
+    }
+    // If no pending change, or it's going in a different direction, create/replace it
+    else if (currentStatus !== newStatus) {
+      newPendingChanges[pendingKey] = {
         type: 'promotion',
         propertyId,
         field: promotionType,
         oldValue: currentStatus,
         newValue: newStatus
-      }
-    });
-  };
-
-  // Toggle cancellation policy status with pending changes
-  const toggleCancellationStatus = (propertyId: number, policyType: keyof typeof properties[0]['cancellationPolicies']) => {
-    const property = properties.find(p => p.id === propertyId);
-    if (!property) return;
-
-    const pendingKey = `${propertyId}-cancellation-${policyType}`;
-
-    // If there's already a pending change, remove it to revert to original state
-    if (pendingChanges[pendingKey]) {
-      const newPendingChanges = { ...pendingChanges };
-      delete newPendingChanges[pendingKey];
-      setPendingChanges(newPendingChanges);
-      return;
+      };
     }
-
-    const currentStatus = property.cancellationPolicies[policyType as keyof typeof property.cancellationPolicies];
-    const newStatus = currentStatus === "active" ? "inactive" : "active";
-
-    // Set pending change
-    setPendingChanges({
-      ...pendingChanges,
-      [pendingKey]: {
-        type: 'cancellation',
-        propertyId,
-        field: policyType,
-        oldValue: currentStatus,
-        newValue: newStatus
-      }
-    });
-  };
-
-  // Apply bulk update of promotions
-  const applyBulkUpdate = (promotionType: string, newStatus: string) => {
-    // Create pending changes for all selected properties
-    const newPendingChanges: Record<string, {
-      type: string;
-      propertyId: number;
-      field: string;
-      oldValue: string;
-      newValue: string;
-    }> = { ...pendingChanges };
-
-    // Track if we need to apply or revert
-    let anyChangesApplied = false;
-
-    selectedProperties.forEach(propertyId => {
-      const property = properties.find(p => p.id === propertyId);
-      if (!property) return;
-
-      const pendingKey = `${propertyId}-promotion-${promotionType}`;
-      const currentStatus = property.promotions[promotionType as keyof typeof property.promotions];
-
-      // Skip if status is not available
-      if (currentStatus === "na") return;
-
-      // If there's a pending change trying to set the same new status we're applying now,
-      // revert it by removing the pending change
-      if (pendingChanges[pendingKey] && pendingChanges[pendingKey].newValue === newStatus) {
-        delete newPendingChanges[pendingKey];
-      }
-      // If no pending change, or it's going in a different direction, create/replace it
-      else if (currentStatus !== newStatus) {
-        newPendingChanges[pendingKey] = {
-          type: 'promotion',
-          propertyId,
-          field: promotionType,
-          oldValue: currentStatus,
-          newValue: newStatus
-        };
-        anyChangesApplied = true;
-      }
-    });
 
     setPendingChanges(newPendingChanges);
   };
@@ -488,11 +488,12 @@ const PortfolioAuto = () => {
       if (property.promotions.limitedTimeDeal === "active") {
         const currentMarkup = property.pmsMarkup;
         const newMarkup = Math.min(Math.round(currentMarkup * 1.4 * 10) / 10, 100); // Increase by 40%, cap at 100%, round to 1 decimal
-
+        
+        // Use updatePropertyPrices to correctly calculate both Guest ADR and Net ADR
         return {
           ...property,
           pmsMarkup: newMarkup,
-          guestAdr: property.adr * (1 + newMarkup / 100)
+          ...updatePropertyPrices({...property, pmsMarkup: newMarkup})
         };
       }
       return property;
@@ -627,7 +628,7 @@ const PortfolioAuto = () => {
 
   // Add these functions right before the return statement in your component
   // Check if property has any active discounts
-  const calculateHasActiveDiscounts = (property) => {
+  const calculateHasActiveDiscounts = (property: { lastSyncDate?: string; id?: number; name?: string; description?: string; image?: string; city?: string; adr?: number; availableDates?: number; pmsMarkup?: number; visibilityBooster?: number; guestAdr: any; netAdr?: number; promotions: any; cancellationPolicies?: { flexible: string; firm: string; nonRefundable: string; }; tags?: string[]; active?: boolean; }) => {
     // Check if any discount promotions are active
     const hasActivePromotionDiscount =
       property.promotions.genius === "active" ||
@@ -645,7 +646,7 @@ const PortfolioAuto = () => {
   };
 
   // Calculate the estimated original price before discounts
-  const calculateOriginalPrice = (property) => {
+  const calculateOriginalPrice = (property: { lastSyncDate?: string; id?: number; name?: string; description?: string; image?: string; city?: string; adr?: number; availableDates?: number; pmsMarkup?: number; visibilityBooster?: number; guestAdr: any; netAdr?: number; promotions: any; cancellationPolicies?: { flexible: string; firm: string; nonRefundable: string; }; tags?: string[]; active?: boolean; }) => {
     // Start with current guest ADR
     let originalPrice = property.guestAdr;
 
@@ -674,8 +675,11 @@ const PortfolioAuto = () => {
   };
 
   // Calculate the discount percentage
-  const calculateDiscountPercentage = (property) => {
-    const originalPrice = calculateOriginalPrice(property);
+  const calculateDiscountPercentage = (property: { lastSyncDate?: string | undefined; id?: number | undefined; name?: string | undefined; description?: string | undefined; image?: string | undefined; city?: string | undefined; adr?: number | undefined; availableDates?: number | undefined; pmsMarkup?: number | undefined; visibilityBooster?: number | undefined; guestAdr: any; netAdr?: number | undefined; promotions?: any; cancellationPolicies?: { flexible: string; firm: string; nonRefundable: string; } | { flexible: string; firm: string; nonRefundable: string; } | undefined; tags?: string[] | undefined; active?: boolean | undefined; }) => {
+    const originalPrice = calculateOriginalPrice({
+      ...property,
+      promotions: property.promotions || {}
+    });
     const discountAmount = originalPrice - property.guestAdr;
     const discountPercentage = (discountAmount / originalPrice) * 100;
 
@@ -737,7 +741,7 @@ const PortfolioAuto = () => {
         </div>
 
         {/* Recommendations Section */}
-        <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+        <div className="mb-6 p-4 bg-blue-100 border border-gray-200 rounded-lg">
           <div
             className="flex justify-between items-center cursor-pointer"
             onClick={() => setShowRecommendations(!showRecommendations)}
@@ -745,7 +749,7 @@ const PortfolioAuto = () => {
             <h2 className="text-xl font-bold flex items-center">
               Recommendations
               {!showRecommendations && (
-                <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">
+                <span className="ml-2 bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">
                   {recommendationCount}
                 </span>
               )}
@@ -788,11 +792,14 @@ const PortfolioAuto = () => {
                     className="px-4 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600"
                     onClick={() => {
                       // Apply 5% markup to all properties
-                      setProperties(properties.map(property => ({
-                        ...property,
-                        pmsMarkup: property.pmsMarkup + 5,
-                        guestAdr: property.adr * (1 + (property.pmsMarkup + 5) / 100)
-                      })));
+                      setProperties(properties.map(property => {
+                        const newMarkup = property.pmsMarkup + 5;
+                        return {
+                          ...property,
+                          pmsMarkup: newMarkup,
+                          ...updatePropertyPrices({...property, pmsMarkup: newMarkup})
+                        };
+                      }));
                       alert("Applied 5% PMS markup to all properties");
                     }}
                   >
@@ -1042,7 +1049,8 @@ const PortfolioAuto = () => {
                         ? {
                           ...property,
                           pmsMarkup: markup,
-                          guestAdr: property.adr * (1 + markup / 100)
+                          // Use updatePropertyPrices to correctly calculate both Guest ADR and Net ADR
+                          ...updatePropertyPrices({...property, pmsMarkup: markup})
                         }
                         : property
                     ));
@@ -1128,7 +1136,9 @@ const PortfolioAuto = () => {
                       selectedProperties.length === 0 || selectedProperties.includes(property.id)
                         ? {
                           ...property,
-                          visibilityBooster: booster
+                          visibilityBooster: booster,
+                          // Use updatePropertyPrices to correctly calculate both Guest ADR and Net ADR
+                          ...updatePropertyPrices({...property, visibilityBooster: booster})
                         }
                         : property
                     ));
@@ -1281,20 +1291,33 @@ const PortfolioAuto = () => {
             </select>
           </div>
 
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <span className="text-gray-700">Tags:</span>
-            {allTags.map((tag) => (
-              <button
-                key={tag}
-                className={`px-2 py-1 text-sm rounded ${selectedTags.includes(tag)
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700'
-                  }`}
-                onClick={() => toggleTag(tag)}
-              >
-                {tag}
-              </button>
-            ))}
+            <div className="flex flex-wrap gap-2 items-center">
+              {/* Show only first 3 tags or all tags if expanded */}
+              {(showAllFilterTags ? allTags : allTags.slice(0, 3)).map((tag) => (
+                <button
+                  key={tag}
+                  className={`px-2 py-1 text-sm rounded ${selectedTags.includes(tag)
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                    }`}
+                  onClick={() => toggleTag(tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+
+              {/* Show expand/collapse button if there are more than 3 tags */}
+              {allTags.length > 3 && (
+                <button
+                  className="px-2 py-1 text-sm rounded bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  onClick={() => setShowAllFilterTags(!showAllFilterTags)}
+                >
+                  {showAllFilterTags ? 'Show less' : `+${allTags.length - 3} more`}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
