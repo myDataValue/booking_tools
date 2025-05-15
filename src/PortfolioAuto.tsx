@@ -170,7 +170,21 @@ const mockProperties = [
 ];
 
 // Calculate discount percentage based on active promotions
-const calculateDiscountPercentage = (property) => {
+interface Promotions {
+  genius: string;
+  limitedTimeDeal: string;
+  getawayDeal: string;
+  lastMinuteDeal: string;
+  earlyBookerDeal: string;
+  weeklyDiscount: string;
+  monthlyDiscount: string;
+}
+
+interface Property {
+  promotions: Promotions;
+}
+
+const calculateDiscountPercentage = (property: Property): number => {
   let discountPercentage = 0;
 
   // Add promotion discounts
@@ -189,7 +203,7 @@ const calculateDiscountPercentage = (property) => {
 };
 
 // Calculate Guest ADR based on base ADR, PMS markup, and discounts
-const calculateGuestAdr = (property) => {
+const calculateGuestAdr = (property: { id?: number | undefined; name?: string | undefined; description?: string | undefined; image?: string | undefined; city?: string | undefined; adr: any; availableDates?: number | undefined; pmsMarkup: any; visibilityBooster?: any; guestAdr?: any; netAdr?: number | undefined; promotions?: { limitedTimeDeal: string; genius: string; mobileRate: string; countryRate: string; getawayDeal: string; customYearlyDeal: string; basicDeal: string; lastMinuteDeal: string; earlyBookerDeal: string; weeklyDiscount: string; monthlyDiscount: string; } | { limitedTimeDeal: string; genius: string; mobileRate: string; countryRate: string; getawayDeal: string; customYearlyDeal: string; basicDeal: string; lastMinuteDeal: string; earlyBookerDeal: string; weeklyDiscount: string; monthlyDiscount: string; } | undefined; cancellationPolicies?: { flexible: string; firm: string; nonRefundable: string; } | { flexible: string; firm: string; nonRefundable: string; } | undefined; tags?: string[] | undefined; active?: boolean | undefined; }) => {
   // Start with base ADR
   const basePrice = property.adr;
   
@@ -197,7 +211,18 @@ const calculateGuestAdr = (property) => {
   const priceWithMarkup = basePrice * (1 + property.pmsMarkup / 100);
   
   // Calculate discount percentage
-  const discountPercentage = calculateDiscountPercentage(property);
+  const discountPercentage = calculateDiscountPercentage({
+    ...property,
+    promotions: property.promotions || {
+      genius: "inactive",
+      limitedTimeDeal: "inactive",
+      getawayDeal: "inactive",
+      lastMinuteDeal: "inactive",
+      earlyBookerDeal: "inactive",
+      weeklyDiscount: "inactive",
+      monthlyDiscount: "inactive",
+    },
+  });
   
   // Apply discounts
   const finalPrice = priceWithMarkup * (1 - discountPercentage / 100);
@@ -207,9 +232,18 @@ const calculateGuestAdr = (property) => {
 };
 
 // Calculate Net ADR (the amount you receive after Booking.com commissions)
-const calculateNetAdr = (property) => {
+const calculateNetAdr = (property: { id?: number; name?: string; description?: string; image?: string; city?: string; adr?: number; availableDates?: number; pmsMarkup?: number; visibilityBooster: any; guestAdr: any; netAdr?: number; promotions?: { limitedTimeDeal: string; genius: string; mobileRate: string; countryRate: string; getawayDeal: string; customYearlyDeal: string; basicDeal: string; lastMinuteDeal: string; earlyBookerDeal: string; weeklyDiscount: string; monthlyDiscount: string; }; cancellationPolicies?: { flexible: string; firm: string; nonRefundable: string; }; tags?: string[]; active?: boolean; }) => {
   // Start with Guest ADR (what the guest pays)
-  const guestAdr = property.guestAdr || calculateGuestAdr(property);
+  if (property.adr === undefined) {
+    throw new Error("Property 'adr' is required to calculate Guest ADR.");
+  }
+  
+  // Use existing guestAdr if available, otherwise calculate it
+  const guestAdr = property.guestAdr || (property.adr !== undefined ? calculateGuestAdr({
+    ...property,
+    adr: property.adr,
+    pmsMarkup: property.pmsMarkup || 0
+  }) : 0);
   
   // Subtract the visibility booster commission
   const netAdr = guestAdr * (1 - property.visibilityBooster / 100);
@@ -219,7 +253,10 @@ const calculateNetAdr = (property) => {
 };
 
 // Update property prices when changing attributes
-const updatePropertyPrices = (property, newPmsMarkup = null, newVisibilityBooster = null) => {
+const updatePropertyPrices = (property: {
+    id: number; name: string; description: string; image: string; city: string; adr: number; availableDates: number; pmsMarkup: number; visibilityBooster: number; // Added visibility booster percentage
+    guestAdr: number; netAdr: number; promotions: { limitedTimeDeal: string; genius: string; mobileRate: string; countryRate: string; getawayDeal: string; customYearlyDeal: string; basicDeal: string; lastMinuteDeal: string; earlyBookerDeal: string; weeklyDiscount: string; monthlyDiscount: string; }; cancellationPolicies: { flexible: string; firm: string; nonRefundable: string; }; tags: string[]; active: boolean;
+  }, newPmsMarkup = null, newVisibilityBooster = null) => {
   const updatedProperty = { ...property };
   
   // Update PMS markup if provided
@@ -321,7 +358,7 @@ const PortfolioAuto = () => {
   };
 
   // Toggle expanded state for cancellations
-  const toggleCancellations = (propertyId: number) => {
+  const toggleCancellations = (propertyId: number, _p0: string) => {
     setExpandedCancellations({
       ...expandedCancellations,
       [propertyId]: !expandedCancellations[propertyId]
@@ -440,7 +477,6 @@ const PortfolioAuto = () => {
     }> = { ...pendingChanges };
 
     // Track if we need to apply or revert
-    let anyChangesApplied = false;
 
     selectedProperties.forEach(propertyId => {
       const property = properties.find(p => p.id === propertyId);
@@ -466,7 +502,6 @@ const PortfolioAuto = () => {
           oldValue: currentStatus,
           newValue: newStatus
         };
-        anyChangesApplied = true;
       }
     });
 
@@ -492,7 +527,6 @@ const PortfolioAuto = () => {
         // Use updatePropertyPrices to correctly calculate both Guest ADR and Net ADR
         return {
           ...property,
-          pmsMarkup: newMarkup,
           ...updatePropertyPrices({...property, pmsMarkup: newMarkup})
         };
       }
@@ -714,12 +748,16 @@ const PortfolioAuto = () => {
           if (type === 'promotion') {
             togglePromotionStatus(propertyId, field);
           } else if (type === 'cancellation') {
-            toggleCancellationStatus(propertyId, field as "flexible" | "firm" | "nonRefundable");
+            toggleCancellations(propertyId, field as "flexible" | "firm" | "nonRefundable");
           }
         }}
       ></div>
     );
   };
+
+  function applyBulkUpdate(_arg0: string, _arg1: string): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div className="p-4 bg-gray-50 min-h-screen">
@@ -796,7 +834,6 @@ const PortfolioAuto = () => {
                         const newMarkup = property.pmsMarkup + 5;
                         return {
                           ...property,
-                          pmsMarkup: newMarkup,
                           ...updatePropertyPrices({...property, pmsMarkup: newMarkup})
                         };
                       }));
@@ -1048,7 +1085,6 @@ const PortfolioAuto = () => {
                       selectedProperties.length === 0 || selectedProperties.includes(property.id)
                         ? {
                           ...property,
-                          pmsMarkup: markup,
                           // Use updatePropertyPrices to correctly calculate both Guest ADR and Net ADR
                           ...updatePropertyPrices({...property, pmsMarkup: markup})
                         }
@@ -1136,7 +1172,6 @@ const PortfolioAuto = () => {
                       selectedProperties.length === 0 || selectedProperties.includes(property.id)
                         ? {
                           ...property,
-                          visibilityBooster: booster,
                           // Use updatePropertyPrices to correctly calculate both Guest ADR and Net ADR
                           ...updatePropertyPrices({...property, visibilityBooster: booster})
                         }
@@ -1943,7 +1978,7 @@ const PortfolioAuto = () => {
                     <td className="p-3 text-center border-l border-gray-200">
                       <button
                         className="px-2 py-1 text-xs rounded bg-blue-50 text-blue-700 hover:bg-blue-100 flex items-center justify-center w-24 mx-auto"
-                        onClick={() => !showCancellationsColumns && toggleCancellations(property.id)}
+                        onClick={() => !showCancellationsColumns && toggleCancellations(property.id, 'flexible')}
                       >
                         <span className="font-medium">{cancellationCount.active}/{cancellationCount.total}</span>
                         {!showCancellationsColumns && (
