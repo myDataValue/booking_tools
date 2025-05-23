@@ -146,7 +146,6 @@ const PerformanceOptimization: React.FC = () => {
         const baseRank = 18; // Starting at a worse position
         const competitorBaseRank = 15;
         const baseConversion = 0.9; // Starting lower
-        const competitorBaseConversion = 0.9;
         const baseListingViews = 85; // Daily listing views
         const baseBookingEfficiency = 160; // Views per booking
 
@@ -496,7 +495,6 @@ const PerformanceOptimization: React.FC = () => {
                 {Object.values(weeks).map((weekData) => {
                     if (weekData.days.length === 0) return null;
 
-                    const firstDay = weekData.days[0];
                     const middleDay = weekData.days[Math.floor(weekData.days.length / 2)];
 
                     const x = xScale(middleDay.date) + xScale.bandwidth() / 2;
@@ -511,10 +509,10 @@ const PerformanceOptimization: React.FC = () => {
                         >
                             <div
                                 className={`text-xs font-medium px-1 py-0.5 rounded text-center mx-auto ${weekData.week === 3 ? 'bg-orange-100 text-orange-800' :
-                                        weekData.week === 5 ? 'bg-emerald-100 text-emerald-800' :
-                                            weekData.week === 4 ? 'bg-green-100 text-green-800' :
-                                                weekData.week === 2 ? 'bg-blue-100 text-blue-800' :
-                                                    'bg-slate-100 text-slate-800'
+                                    weekData.week === 5 ? 'bg-emerald-100 text-emerald-800' :
+                                        weekData.week === 4 ? 'bg-green-100 text-green-800' :
+                                            weekData.week === 2 ? 'bg-blue-100 text-blue-800' :
+                                                'bg-slate-100 text-slate-800'
                                     }`}
                             >
                                 Week {weekData.week}: {weekData.strategy}
