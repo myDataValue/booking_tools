@@ -11,7 +11,7 @@ if (root) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <BrowserRouter>
-        <nav className="bg-gray-800 text-white p-4">
+        <nav className="bg-gray-800 text-white p-4 fixed z-10 w-full">
           <ul className="flex space-x-4">
             <li>
               <Link to="/" className="hover:text-gray-300">Free Health Score Page</Link>
@@ -22,10 +22,12 @@ if (root) {
           </ul>
         </nav>
 
+      <div className="pt-[48px]">
         <Routes>
           <Route path="/" element={<MyDataValueHealthScore channelListingId={11080502} />} />
           <Route path="/search" element={<MyDataValueHealthScore />} />
         </Routes>
+      </div>
       </BrowserRouter>
     </React.StrictMode>
   );
