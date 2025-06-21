@@ -22,12 +22,12 @@ if (root) {
           </ul>
         </nav>
 
-      <div className="pt-[48px]">
-        <Routes>
-          <Route path="/" element={<MyDataValueHealthScore channelListingId={11080502} />} />
-          <Route path="/search" element={<MyDataValueHealthScore />} />
-        </Routes>
-      </div>
+        <div className="pt-[48px]">
+          <Routes>
+            <Route path="/" element={<MyDataValueHealthScore channelListingId={8740347} />} />
+            <Route path="/search" element={<MyDataValueHealthScore />} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </React.StrictMode>
   );
