@@ -1,11 +1,27 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import { MyDataValueHealthScore } from '@mydatavalue/sdk';
+import { MyDataValueDashboard, MyDataValueHealthScore } from '@mydatavalue/sdk';
 import "./index.css";
 import '@mydatavalue/sdk/style.css';
 
 const root = document.getElementById("root");
+
+const testProps = {
+  accountId: 20802598,
+  userDetails: {
+    email: 'test2@hostify.com',
+    firstName: 'John',
+    lastName: 'Doe',
+  },
+  properties: [
+    {
+      property_id: 14224302,
+      name: 'Modern Property In Leeds',
+      markup: 56,
+    },
+  ],
+};
 
 if (root) {
   ReactDOM.createRoot(root).render(
@@ -24,8 +40,9 @@ if (root) {
 
         <div className="pt-[48px]">
           <Routes>
-            <Route path="/" element={<MyDataValueHealthScore channelListingId={8740347} />} />
+            <Route path="/" element={<MyDataValueDashboard {...testProps} />} />
             <Route path="/search" element={<MyDataValueHealthScore />} />
+            <Route path="/searched-property" element={<MyDataValueHealthScore channelListingId={8740347} />} />
           </Routes>
         </div>
       </BrowserRouter>
