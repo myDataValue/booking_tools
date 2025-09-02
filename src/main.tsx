@@ -8,7 +8,7 @@ import '@mydatavalue/sdk/style.css';
 const root = document.getElementById("root");
 
 const testProps = {
-  accountId: 20802598,
+  accountId: 21363484,
   userDetails: {
     email: 'test2@hostify.com',
     firstName: 'John',
@@ -16,8 +16,8 @@ const testProps = {
   },
   properties: [
     {
-      property_id: 14224302,
-      name: 'Modern Property In Leeds',
+      property_id: 11397434,
+      name: 'Adeti Residence',
       markup: 56,
     },
   ],
@@ -27,7 +27,7 @@ if (root) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <BrowserRouter>
-        <nav className="bg-gray-800 text-white p-4 fixed z-10 w-full">
+        <nav className="bg-gray-800 text-white p-4 w-full">
           <ul className="flex space-x-4">
             <li>
               <Link to="/" className="hover:text-gray-300">Free Health Score Page</Link>
@@ -38,13 +38,11 @@ if (root) {
           </ul>
         </nav>
 
-        <div className="pt-[48px]">
-          <Routes>
-            <Route path="/" element={<MyDataValueDashboard {...testProps} />} />
-            <Route path="/search" element={<MyDataValueHealthScore />} />
-            <Route path="/searched-property" element={<MyDataValueHealthScore channelListingId={8740347} />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<MyDataValueDashboard {...testProps} />} />
+          <Route path="/search" element={<MyDataValueHealthScore />} />
+          <Route path="/searched-property" element={<MyDataValueHealthScore channelListingId={8740347} />} />
+        </Routes>
       </BrowserRouter>
     </React.StrictMode>
   );
