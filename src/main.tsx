@@ -7,19 +7,19 @@ import '@mydatavalue/sdk/style.css';
 
 const root = document.getElementById("root");
 
-const testProps = {
-  accountId: 21363484,
+const appProps = {
+  accountId: 21363484, // users booking account id
   userDetails: {
-    email: 'test2@hostify.com',
+    email: 'test@hostify.com',
     firstName: 'John',
     lastName: 'Doe',
   },
   properties: [
     {
-      property_id: 11397434,
+      property_id: 11397434, // channel_listing_id
       name: 'Adeti Residence',
-      markup: 56,
-    },
+      markup: 55,
+    }
   ],
 };
 
@@ -39,7 +39,7 @@ if (root) {
         </nav>
 
         <Routes>
-          <Route path="/" element={<MyDataValueDashboard {...testProps} />} />
+          <Route path="/" element={<MyDataValueDashboard {...appProps} />} />
           <Route path="/search" element={<MyDataValueHealthScore />} />
           <Route path="/searched-property" element={<MyDataValueHealthScore channelListingId={8740347} />} />
         </Routes>
