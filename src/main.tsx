@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { MyDataValueDashboard, MyDataValueHealthScore } from "@mydatavalue/sdk";
@@ -6,28 +6,29 @@ import "./index.css";
 import "@mydatavalue/sdk/style.css";
 import { useAuthExample } from "./auth-examples/useAuthExample";
 
-const appProps = {
-  accountId: 10330015,
-  userDetails: { email: "test@hostify.com", firstName: "John", lastName: "Doe" },
-  markups: { 14881997: 55 },
-  initialPropertiesForSetup: [
-    {
-      id: 16471,
-      property_id: 30058984,
-      name: "90sqm 3Room Full Kitchen, 5min Main Station, Quiet",
-    },
-  ],
-};
+const accountId = 10330015
 
 function App() {
   // DO NOT DO USE THIS HOOK IN YOUR FRONTEND OR IT WILL LEAK THE SECRET. This is an example.
   // Use the auth-examples/api.ts as an example for how to auth from your server to our server
-  const { ready, error } = useAuthExample({
-    accountId: appProps.accountId,
-    email: appProps.userDetails.email,
-    firstName: appProps.userDetails.firstName,
-    lastName: appProps.userDetails.lastName,
+  const { token, ready, error } = useAuthExample({
+    accountId,
   });
+
+  const appProps = useMemo(() => ({
+    jwtToken: token,
+    accountId,
+    userDetails: { email: "test@hostify.com", firstName: "John", lastName: "Doe" },
+    markups: { 14881997: 55 },
+    initialPropertiesForSetup: [
+      {
+        id: 16471,
+        property_id: 30058984,
+        name: "90sqm 3Room Full Kitchen, 5min Main Station, Quiet",
+      },
+    ],
+
+  }), [token, accountId])
 
   if (error) return <div className="p-4 text-red-600">Auth error: {error}</div>;
   if (!ready) return <div className="p-4">Bootstrapping…</div>;
