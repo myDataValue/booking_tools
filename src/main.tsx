@@ -16,9 +16,8 @@ function App() {
   });
 
   const appProps = useMemo(() => ({
-    jwtToken: token,
+    jwtToken: String(token),
     accountId,
-    userDetails: { email: "test@hostify.com", firstName: "John", lastName: "Doe" },
     markups: { 14881997: 55 },
     initialPropertiesForSetup: [
       {
@@ -31,7 +30,7 @@ function App() {
   }), [token, accountId])
 
   if (error) return <div className="p-4 text-red-600">Auth error: {error}</div>;
-  if (!ready) return <div className="p-4">Bootstrapping…</div>;
+  if (!ready && !token) return <div className="p-4">Bootstrapping…</div>;
 
   return (
     <BrowserRouter>
