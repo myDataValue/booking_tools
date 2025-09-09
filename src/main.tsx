@@ -6,7 +6,7 @@ import "./index.css";
 import "@mydatavalue/sdk/style.css";
 import { useAuthExample } from "./auth-examples/useAuthExample";
 
-const accountId = 10330015
+const accountId = 11616782
 
 function App() {
   // DO NOT DO USE THIS HOOK IN YOUR FRONTEND OR IT WILL LEAK THE SECRET. This is an example.
@@ -18,12 +18,12 @@ function App() {
   const appProps = useMemo(() => ({
     jwtToken: String(token),
     accountId,
-    markups: { 14881997: 55 },
+    markups: { 9976606: 77 },
     initialPropertiesForSetup: [
       {
-        id: 16471,
-        property_id: 30058984,
-        name: "90sqm 3Room Full Kitchen, 5min Main Station, Quiet",
+        id: 139177,
+        property_id: 9976606,
+        name: "165m2 Downtown Family Suite 5BR, 3Bath, kids room, 11min Alexanderplatz",
       },
     ],
 
