@@ -5,29 +5,18 @@ import { MyDataValueDashboard, MyDataValueHealthScore } from "@mydatavalue/sdk";
 import "./index.css";
 import "@mydatavalue/sdk/style.css";
 import { useAuthExample } from "./auth-examples/useAuthExample";
-
-const accountId = 11616782
+import props from './props.json';
 
 function App() {
-  // DO NOT DO USE THIS HOOK IN YOUR FRONTEND OR IT WILL LEAK THE SECRET. This is an example.
-  // Use the auth-examples/api.ts as an example for how to auth from your server to our server
+  // DO NOT DO USE THIS HOOK IN YOUR FRONTEND OR IT WILL LEAK THE SECRET. This is just for us to get the jwtToken.
   const { token, ready, error } = useAuthExample({
-    accountId,
+    accountId: props.accountId,
   });
 
   const appProps = useMemo(() => ({
+    ...props,
     jwtToken: String(token),
-    accountId,
-    markups: { 9976606: 77 },
-    initialPropertiesForSetup: [
-      {
-        id: 139177,
-        property_id: 9976606,
-        name: "165m2 Downtown Family Suite 5BR, 3Bath, kids room, 11min Alexanderplatz",
-      },
-    ],
-
-  }), [token, accountId])
+  }), [token, props.accountId])
 
   if (error) return <div className="p-4 text-red-600">Auth error: {error}</div>;
   if (!ready && !token) return <div className="p-4">Bootstrapping…</div>;
